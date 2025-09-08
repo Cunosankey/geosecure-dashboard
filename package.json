@@ -27,7 +27,6 @@
     "@storybook/addon-onboarding": "^9.1.5",
     "@storybook/addon-vitest": "^9.1.5",
     "@storybook/nextjs-vite": "^9.1.5",
-    "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -41,7 +40,6 @@
     "eslint-plugin-storybook": "^9.1.5",
     "playwright": "^1.55.0",
     "storybook": "^9.1.5",
-    "tailwindcss": "^4",
     "typescript": "^5",
     "vite": "^7.1.4",
     "vitest": "^3.2.4"
