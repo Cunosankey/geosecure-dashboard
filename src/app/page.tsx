@@ -2,12 +2,13 @@ import MapView from "../components/MapView/MapView";
 import FilterPanel from "../components/FilterPanel/FilterPanel";
 import styles from "../styles/Home.module.scss";
 
-export default function HomePage() {
+export default function Page() {
   return (
-    <main className={styles.container}>
-      <h1>GeoSecure Dashboard</h1>
+    <div className={styles.pageWrapper}>
       <FilterPanel />
-      <MapView />
-    </main>
+      <div className={styles.mapContainer}>
+        <MapView />
+      </div>
+    </div>
   );
 }

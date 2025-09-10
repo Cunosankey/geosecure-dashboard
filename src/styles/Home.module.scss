@@ -1,0 +1,23 @@
+
+.filterPanel {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.filterPanel {
+  position: relative;
+  z-index: 2;
+}
+
+.mapContainer {
+  flex: 1;
+  position: relative;
+  min-height: 0; /* Fixes flexbox overflow issues */
+}
