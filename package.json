@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@types/react-map-gl": "^6.1.7",
+    "cors": "^2.8.5",
     "deck.gl": "^9.1.14",
+    "express": "^5.1.0",
     "mapbox-gl": "^3.14.0",
     "maplibre-gl": "^5.7.1",
     "next": "15.5.2",

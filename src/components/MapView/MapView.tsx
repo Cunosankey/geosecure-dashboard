@@ -1,19 +1,36 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import Map from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import DeckGL from "@deck.gl/react";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { useFilters } from "../../context/FilterContext";
-import FilterPanel from "../FilterPanel/FilterPanel";
 
-// Sample data points
-const DATA = [
-  { position: [12.5683, 55.6761], size: 100, color: [255, 0, 0], city: "Copenhagen", type: "Incident" },
-  { position: [10.2039, 56.1629], size: 80, color: [0, 255, 0], city: "Aarhus", type: "Alert" },
-  { position: [9.9217, 57.0488], size: 70, color: [0, 0, 255], city: "Aalborg", type: "Incident" },
-];
+// Define the Incident type
+type Incident = {
+  city: string;
+  type: string;
+  position: [number, number];
+  color: [number, number, number];
+  size: number;
+};
+
+// Main MapView component. Here we integrate the map with filtering functionality.
+export default function MapView() {
+  const { filters } = useFilters();
+
+  // Local state for incidents fetched from backend
+  const [data, setData] = React.useState<Incident[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/incidents")
+      .then((res) => res.json())
+      .then((incoming) => setData(incoming))
+      .catch((err) => {
+        console.error("Failed to fetch incidents:", err);
+      });
+  }, []);
 
 // Initial view state for the map
 const INITIAL_VIEW_STATE = {
@@ -24,18 +41,14 @@ const INITIAL_VIEW_STATE = {
   bearing: 0,
 };
 
-// Main MapView component. Here we integrate the map with filtering functionality.
-export default function MapView() {
-  const { filters } = useFilters();
-
   // Memoize filtered data for performance to avoid unnecessary recalculations
   const filteredData = useMemo(() => {
-    return DATA.filter((item) => {
+    return data.filter((item) => {
       const cityMatch = !filters.city || item.city === filters.city;
       const typeMatch = !filters.type || item.type === filters.type;
       return cityMatch && typeMatch;
     });
-  }, [filters]);
+  }, [filters, data]);
   // Define layers for DeckGL, because layers depend on filteredData, they will update when filters change
   const layers = [
     new ScatterplotLayer({
@@ -46,7 +59,7 @@ export default function MapView() {
       getRadius: (d: any) => d.size,
     }),
   ];
-  // Render the map
+  // Render the map using the MapLibre token
   return (
     <>
       <DeckGL initialViewState={INITIAL_VIEW_STATE} controller layers={layers}>
