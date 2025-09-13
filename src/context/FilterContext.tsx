@@ -1,3 +1,4 @@
+// FilterContext holder styr på de valgte filtre (city, type).
 "use client";
 
 import React, { createContext, useContext, useState, useMemo } from "react";

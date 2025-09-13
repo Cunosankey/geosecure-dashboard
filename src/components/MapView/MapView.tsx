@@ -1,13 +1,16 @@
+// MapView henter alle incidents (fra mit mock-API eller et statisk array).
+// MapView filtrerer data vha. useMemo baseret på filters.
+// DeckGL ScatterplotLayer viser de filtrerede punkter på kortet.
 "use client";
 
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import Map from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import DeckGL from "@deck.gl/react";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { useFilters } from "../../context/FilterContext";
 
-// Define the Incident type
+// Define the Incident type 
 type Incident = {
   city: string;
   type: string;
@@ -15,22 +18,6 @@ type Incident = {
   color: [number, number, number];
   size: number;
 };
-
-// Main MapView component. Here we integrate the map with filtering functionality.
-export default function MapView() {
-  const { filters } = useFilters();
-
-  // Local state for incidents fetched from backend
-  const [data, setData] = React.useState<Incident[]>([]);
-
-  useEffect(() => {
-    fetch("http://localhost:5000/api/incidents")
-      .then((res) => res.json())
-      .then((incoming) => setData(incoming))
-      .catch((err) => {
-        console.error("Failed to fetch incidents:", err);
-      });
-  }, []);
 
 // Initial view state for the map
 const INITIAL_VIEW_STATE = {
@@ -41,14 +28,35 @@ const INITIAL_VIEW_STATE = {
   bearing: 0,
 };
 
+// Main MapView component. Here we integrate the map with filtering functionality.
+export default function MapView() {
+  const { filters } = useFilters();
+  // Local state for incidents fetched from backend
+  const [data, setData] = React.useState<Incident[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/incidents")
+      .then((res) => res.json())
+      .then((json) => setData(json))
+      .catch(() => {
+        setData([
+          { position: [12.5683, 55.6761], size: 100, color: [255, 0, 0], city: "Copenhagen", type: "Incident" },
+          { position: [10.2039, 56.1629], size: 80, color: [0, 255, 0], city: "Aarhus", type: "Alert" },
+          { position: [9.9217, 57.0488], size: 70, color: [0, 0, 255], city: "Aalborg", type: "Incident" },
+        ]);
+      });
+  }, []);
+
+
   // Memoize filtered data for performance to avoid unnecessary recalculations
   const filteredData = useMemo(() => {
-    return data.filter((item) => {
+    return data.filter((item: any) => {
       const cityMatch = !filters.city || item.city === filters.city;
       const typeMatch = !filters.type || item.type === filters.type;
       return cityMatch && typeMatch;
     });
   }, [filters, data]);
+  
   // Define layers for DeckGL, because layers depend on filteredData, they will update when filters change
   const layers = [
     new ScatterplotLayer({
