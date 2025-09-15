@@ -12,6 +12,7 @@ import { useFilters } from "../../context/FilterContext";
 
 // Define the Incident type 
 type Incident = {
+  id: number;
   city: string;
   type: string;
   position: [number, number];
@@ -34,34 +35,26 @@ export default function MapView() {
   // Local state for incidents fetched from backend
   const [data, setData] = React.useState<Incident[]>([]);
 
+  // Fetch data when filters change. We use useEffect to trigger fetch on filter change and on every render (can be made more optimized later)
   useEffect(() => {
-    fetch("http://localhost:5000/api/incidents")
+    const q = new URLSearchParams();
+    if (filters.city) q.set("city", filters.city); // only add to query if filter is set
+    if (filters.type) q.set("type", filters.type); 
+
+    fetch(`http://localhost:5000/api/incidents?${q.toString()}`)
       .then((res) => res.json())
       .then((json) => setData(json))
-      .catch(() => {
-        setData([
-          { position: [12.5683, 55.6761], size: 100, color: [255, 0, 0], city: "Copenhagen", type: "Incident" },
-          { position: [10.2039, 56.1629], size: 80, color: [0, 255, 0], city: "Aarhus", type: "Alert" },
-          { position: [9.9217, 57.0488], size: 70, color: [0, 0, 255], city: "Aalborg", type: "Incident" },
-        ]);
+      .catch((err) => {
+        console.error("Failed to fetch incidents:", err);
+        setData([]); // fallback hvis API fejler
       });
-  }, []);
-
-
-  // Memoize filtered data for performance to avoid unnecessary recalculations
-  const filteredData = useMemo(() => {
-    return data.filter((item: any) => {
-      const cityMatch = !filters.city || item.city === filters.city;
-      const typeMatch = !filters.type || item.type === filters.type;
-      return cityMatch && typeMatch;
-    });
-  }, [filters, data]);
+  }, [filters]); // <-- nyt fetch når filters ændres
   
   // Define layers for DeckGL, because layers depend on filteredData, they will update when filters change
   const layers = [
     new ScatterplotLayer({
       id: "scatter",
-      data: filteredData,
+      data,
       getPosition: (d: any) => d.position,
       getFillColor: (d: any) => d.color,
       getRadius: (d: any) => d.size,
