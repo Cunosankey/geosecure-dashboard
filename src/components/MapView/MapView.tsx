@@ -9,16 +9,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import DeckGL from "@deck.gl/react";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { useFilters } from "../../context/FilterContext";
+import { getIncidents } from "../../api/incidents";
+import type { Incident } from "../../types/incident";
 
-// Define the Incident type 
-type Incident = {
-  id: number;
-  city: string;
-  type: string;
-  position: [number, number];
-  color: [number, number, number];
-  size: number;
-};
 
 // Initial view state for the map
 const INITIAL_VIEW_STATE = {
@@ -37,13 +30,8 @@ export default function MapView() {
 
   // Fetch data when filters change. We use useEffect to trigger fetch on filter change and on every render (can be made more optimized later)
   useEffect(() => {
-    const q = new URLSearchParams();
-    if (filters.city) q.set("city", filters.city); // only add to query if filter is set
-    if (filters.type) q.set("type", filters.type); 
-
-    fetch(`http://localhost:5000/api/incidents?${q.toString()}`)
-      .then((res) => res.json())
-      .then((json) => setData(json))
+    getIncidents({ city: filters.city || undefined, type: filters.type || undefined })
+      .then(setData)
       .catch((err) => {
         console.error("Failed to fetch incidents:", err);
         setData([]); // fallback hvis API fejler
