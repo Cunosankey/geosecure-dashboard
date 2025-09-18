@@ -6,7 +6,7 @@ export type Incident = {
   city: string;
   type: string;
   position: [number, number];
-  color: [number, number, number];
+  color: [number, number, number, number]; // RGBA, so i can make it see-trough for the map
   size: number;
 };
 
@@ -17,12 +17,12 @@ const cities: { name: string; coords: [number, number] }[] = [
   { name: "Odense", coords: [10.3883, 55.4038] },
 ];
 
-const types: { name: string; color: [number, number, number] }[] =[
-  // For the colors, we use RGB format
-  { name: "Incident", color: [255, 0, 0] }, // red
-  { name: "Warning", color: [255, 165, 0] }, // orange
-  { name: "Alert", color: [0, 255, 0] }, // green
-  { name: "Info", color: [0, 0, 255] }, // blue
+// For the colors, we use RGBA format
+const types: { name: string; color: [number, number, number, number] }[] = [
+  { name: "Incident", color: [255, 0, 0, 160] },   // semi-transparent rød
+  { name: "Warning", color: [255, 165, 0, 160] }, // semi-transparent orange
+  { name: "Alert", color: [255, 255, 0, 160] },   // semi-transparent gul
+  { name: "Info", color: [0, 0, 255, 160] },      // semi-transparent blå
 ];
 
 export function generateIncidents(): Incident[] {
@@ -30,13 +30,17 @@ export function generateIncidents(): Incident[] {
   let id = 1;
   for (const city of cities) {
     for (const t of types) {
+      // Randomize position within ~0.02 degrees of city center
+      const [baseLon, baseLat] = city.coords;
+      const randomLon = baseLon + (Math.random() - 0.5) * 0.04; // +/- 0.02 deg
+      const randomLat = baseLat + (Math.random() - 0.5) * 0.04; // +/- 0.02 deg
       data.push({
         id: id++,
         city: city.name,
         type: t.name,
-        position: city.coords,
+        position: [randomLon, randomLat],
         color: t.color,
-        size: Math.floor(Math.random() * 40) + 60,
+        size: Math.floor(Math.random() * 350) + 120, // Random size between 120 and 470
       });
     }
   }

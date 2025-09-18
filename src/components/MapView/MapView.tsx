@@ -46,6 +46,9 @@ export default function MapView() {
       getPosition: (d: any) => d.position,
       getFillColor: (d: any) => d.color,
       getRadius: (d: any) => d.size,
+      stroked: true,      // Enable borders around circles
+      getLineColor: [0, 0, 0, 255],   // Black border for better visibility
+      lineWidthMaxPixels: 1.5,    // Thicker border for better visibility
     }),
   ];
   // Render the map using the MapLibre token
