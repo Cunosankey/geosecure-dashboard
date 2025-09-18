@@ -27,7 +27,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   // Issue the HTTP request with JSON headers by default
   const res = await fetch(url, {
     headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-    ...options,
+    ...options, // the purpose of "...options" is to allow the caller to override any of the default settings above
   });
 
   // If server says anything outside 2xx, turn it into a thrown error

@@ -1,4 +1,6 @@
-// utils/generateData.ts
+// Here we generate mock incident data for different cities and types.
+// Each incident has an id, city, type, position (longitude, latitude), color (RGB), and size (radius).
+// We simulate data for 4 cities and 4 types, resulting in 16 incidents with random sizes.
 export type Incident = {
   id: number;
   city: string;
