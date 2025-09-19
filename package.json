@@ -13,6 +13,7 @@
     "electron": "electron electron.js"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.89.0",
     "@types/react-map-gl": "^6.1.7",
     "cors": "^2.8.5",
     "deck.gl": "^9.1.14",

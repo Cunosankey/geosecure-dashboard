@@ -13,7 +13,7 @@ export default function FilterPanel() {
         City:
         <select
           value={filters.city}
-          onChange={(e) => setFilters((prev) => ({ ...prev, city: e.target.value }))}
+          onChange={(e) => setFilters((prev) => ({ ...prev, city: e.target.value }))} // We use setFilters((prev) => ...) to ensure we keep other filter values intact
         >
           <option value="">All</option>
           <option value="Copenhagen">Copenhagen</option>

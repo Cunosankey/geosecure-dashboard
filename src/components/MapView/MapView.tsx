@@ -4,6 +4,7 @@
 "use client";
 
 import React, { useMemo, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Map from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import DeckGL from "@deck.gl/react";
@@ -25,24 +26,24 @@ const INITIAL_VIEW_STATE = {
 // Main MapView component. Here we integrate the map with filtering functionality.
 export default function MapView() {
   const { filters } = useFilters();
-  // Local state for incidents fetched from backend
-  const [data, setData] = React.useState<Incident[]>([]);
-
-  // Fetch data when filters change. We use useEffect to trigger fetch on filter change and on every render (can be made more optimized later)
-  useEffect(() => {
-    getIncidents({ city: filters.city || undefined, type: filters.type || undefined })
-      .then(setData)
-      .catch((err) => {
-        console.error("Failed to fetch incidents:", err);
-        setData([]); // fallback hvis API fejler
-      });
-  }, [filters]); // <-- nyt fetch når filters ændres
+  // Use TanStack Query for incidents fetching
+  const {
+    data = [] as Incident[],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<Incident[]>({ // Refetch data when filters change
+    queryKey: ["incidents", filters], // Include filters in the query key to refetch when they change
+    queryFn: () => getIncidents({ city: filters.city || undefined, type: filters.type || undefined }), // Fetch incidents with applied filters
+    placeholderData: [], // Provide an empty array as placeholder for the data
+  });
   
   // Define layers for DeckGL, because layers depend on filteredData, they will update when filters change
   const layers = [
     new ScatterplotLayer({
       id: "scatter",
-      data,
+      data, // Use the filtered data
       getPosition: (d: any) => d.position,
       getFillColor: (d: any) => d.color,
       getRadius: (d: any) => d.size,

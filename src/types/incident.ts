@@ -3,6 +3,6 @@ export type Incident = {
   city: string;
   type: string;
   position: [number, number];
-  color: [number, number, number];
+  color: [number, number, number, number];
   size: number;
 };
