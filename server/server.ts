@@ -18,7 +18,7 @@ app.use("/api/incidents", incidentsRoute);
 
 // And lastly we start the server with the listen method and log the URL
 app.listen(PORT, () => {
-  console.log(`Mock API running at http://localhost:${PORT}`);
+  console.log(`Express API running at http://localhost:${PORT}`);
 });
 
 // To run the server, use the command: npx ts-node server/server.ts

@@ -1,3 +1,5 @@
+"use client";
+
 import MapView from "../components/MapView/MapView";
 import FilterPanel from "../components/FilterPanel/FilterPanel";
 import styles from "../styles/Home.module.scss";

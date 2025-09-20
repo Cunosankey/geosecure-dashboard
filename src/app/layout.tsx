@@ -1,3 +1,5 @@
+"use client"; // to make sure we can use QueryClientProvider and FilterProvider here (it's a client component)
+
 import "../styles/globals.scss";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FilterProvider } from "../context/FilterContext";

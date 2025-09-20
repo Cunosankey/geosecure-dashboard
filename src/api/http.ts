@@ -1,6 +1,5 @@
-// Base URL for your backend API.
-// - We first try to read NEXT_PUBLIC_API_BASE_URL from your environment (.env.local)
-// - If it's not set, we fall back to your local mock server at http://localhost:5000
+// Base URL for my backend API.
+// - We first try to read NEXT_PUBLIC_API_BASE_URL from my environment (.env.local)
 // The replace(/\/$/, "") just removes a trailing slash to avoid URLs like "//api/incidents".
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:5000";
