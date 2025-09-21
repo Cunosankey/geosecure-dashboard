@@ -1,19 +1,41 @@
-
 .filterPanel {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
+  position: absolute;      // float above the map
+  top: 15px;               // inset from top
+  left: 13px;              // inset from left
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.95); // light card background
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+
+  select {
+    padding: 0.35rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    background-color: #fff;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: #999;
+    }
+  }
+}
+.filterPanel label {
+  font-size: 0.90rem;
+  font-weight: 600;
+  color: #333; // darker for readability
+  margin-right: 0.20rem;
 }
 
 .pageWrapper {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-.filterPanel {
-  position: relative;
-  z-index: 2;
 }
 
 .mapContainer {
@@ -23,17 +45,15 @@
 }
 
 .hoverTooltip {
-  background: #222;         // solid dark background
+  background: #222;
   color: #fff;
-  padding: 12px 16px;
-  border: 2px solid #fff;   // white border for contrast
-  border-radius: 8px;
-  min-width: 140px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-  font-size: 15px;
-  font-family: inherit;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
+  padding: 10px 14px;
+  border: 1.5px solid #fff;
+  border-radius: 6px;
+  min-width: 130px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+  font-size: 14px;
+  line-height: 1.4;
   cursor: pointer;
 }
 
@@ -41,24 +61,47 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 20%; // Making the sidebar 1 fifth of the screen width
+  width: 22%; // Slightly larger for clarity
   height: 100%;
-  background: rgb(245, 242, 242);
-  border-right: 1px solid #ccc;
-  padding: 1rem;
+  background: #fafafa;
+  border-right: 1px solid #ddd;
+  padding: 1.25rem;
   z-index: 20;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  color: #030202; 
+  color: #111;
+  font-size: 0.95rem;
 
+  h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #222;
+  }
+
+  p {
+    margin: 0.35rem 0;
+    line-height: 1.5;
+
+    strong {
+      display: inline-block;
+      min-width: 85px; // align labels
+      color: #333;
+    }
+  }
 }
 
 .closeButton {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
   border: none;
   background: transparent;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   cursor: pointer;
+  color: #666;
+
+  &:hover {
+    color: #000;
+  }
 }
