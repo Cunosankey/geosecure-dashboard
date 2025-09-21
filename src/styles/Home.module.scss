@@ -36,3 +36,29 @@
   line-height: 1.5;
   cursor: pointer;
 }
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20%; // Making the sidebar 1 fifth of the screen width
+  height: 100%;
+  background: rgb(245, 242, 242);
+  border-right: 1px solid #ccc;
+  padding: 1rem;
+  z-index: 20;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+  overflow-y: auto;
+  color: #030202; 
+
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  cursor: pointer;
+}

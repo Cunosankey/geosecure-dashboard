@@ -36,27 +36,24 @@ const [hoverInfo, setHoverInfo] = React.useState<{
   object: Incident | null; // the incident data
 } | null>(null); // We put null as initial state because nothing is hovered at the start
 
+// Sidebar state (click on plot to open)
+const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+
 
   // Use TanStack Query for incidents fetching
-  const {
-    data = [] as Incident[],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery<Incident[]>({
+  const { data = [] } = useQuery<Incident[]>({
     queryKey: ["incidents", filters],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (filters.city) params.set("city", filters.city);
       if (filters.type) params.set("type", filters.type);
       const qs = params.toString();
-      const path = `/api/incidents${qs ? `?${qs}` : ""}`;
+      const path = `/api/incidents${qs ? `?${qs}` : ""}`; // Not the path to my incidents.ts in API folder, but to the route for the Express backend
       return await http.get<Incident[]>(path);
     },
     placeholderData: [],
   });
-  
+
   // Define layers for DeckGL, because layers depend on filteredData, they will update when filters change
   const layers = [
     new ScatterplotLayer({
@@ -75,6 +72,11 @@ const [hoverInfo, setHoverInfo] = React.useState<{
           setHoverInfo({ x: info.x, y: info.y, object: info.object });
         } else {
           setHoverInfo(null);
+        }
+      },
+      onClick: (info) => {
+        if (info.object) {
+          setSelectedIncident(info.object); // Open Sidebar with incident details
         }
       }
     }),
@@ -100,7 +102,28 @@ const [hoverInfo, setHoverInfo] = React.useState<{
         Date/Time: {hoverInfo.object.datetime}
       </div>
     )}
-    {hoverInfo?.object && console.log(hoverInfo.object)}
+    {/* Sidebar for clicked incidents */}
+{selectedIncident && (
+  <div className={styles.sidebar}>
+    <button
+      className={styles.closeButton}
+      onClick={() => setSelectedIncident(null)}
+    >
+      ✕
+    </button>
+
+    <h3>{selectedIncident.type}</h3>
+
+    <p><strong>ID:</strong> {selectedIncident.incidentID}</p>
+    <p><strong>City:</strong> {selectedIncident.city}</p>
+    <p><strong>Size:</strong> {Math.round(selectedIncident.size)} m</p>
+    <p><strong>Date/Time:</strong> {selectedIncident.datetime}</p>
+    <p><strong>Severity:</strong> {selectedIncident.severity}</p>
+    <p><strong>Status:</strong> {selectedIncident.status}</p>
+    <p><strong>Source:</strong> {selectedIncident.source}</p>
+    <p><strong>Description:</strong> {selectedIncident.description}</p>
+  </div>
+)}
   </>
 );
 }

@@ -19,6 +19,17 @@ const types: { name: string; color: [number, number, number, number] }[] = [
   { name: "Info", color: [0, 0, 255, 160] },      // semi-transparent blå
 ];
 
+const severities = ["Low", "Medium", "High", "Critical"];
+const statuses = ["Open", "Investigating", "Resolved", "Closed"];
+const sources = ["Sensor", "Manual Report", "Automated System", "External Feed"];
+const descriptions = [
+  "Traffic disruption reported in the area.",
+  "Unusual network activity detected.",
+  "Weather-related warning issued.",
+  "Manual report of suspicious activity.",
+  "Sensor detected unusual vibration pattern.",
+];
+
 export function generateIncidents(): Incident[] {
   // We now generate a random diameter (in meters) for each incident plot.
   // This makes the plots much larger and more visible on the map.
@@ -26,32 +37,42 @@ export function generateIncidents(): Incident[] {
   let id = 1;
   for (const city of cities) {
     for (const t of types) {
-  // Randomize position within ~0.15 degrees of city center (further spread)
-  // This means incidents can appear up to ~15km away from the city center
-  const [baseLon, baseLat] = city.coords;
-  const randomLon = baseLon + (Math.random() - 0.5) * 0.12; // +/- 0.12 deg (longitude)
-  const randomLat = baseLat + (Math.random() - 0.5) * 0.12; // +/- 0.12 deg (latitude)
-  // Generate a random diameter between 250 and 450 meters for each incident
-  // This makes the plots smaller and more realistic
-  const diameter = Math.random() * 750 + 100;
-  // Generate a random date/time in the 7 days before a fixed date(20/09/2025) (to keep data consistent)
-  const fixedNow = new Date("2025-09-20T23:59:59");
-  const pastWeek = new Date(fixedNow.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const randomTimestamp = pastWeek.getTime() + Math.random() * (fixedNow.getTime() - pastWeek.getTime());
-  const randomDate = new Date(randomTimestamp);
+      // Randomize position within ~0.15 degrees of city center (further spread)
+      // This means incidents can appear up to ~15km away from the city center
+      const [baseLon, baseLat] = city.coords;
+      const randomLon = baseLon + (Math.random() - 0.5) * 0.12; // +/- 0.12 deg (longitude)
+      const randomLat = baseLat + (Math.random() - 0.5) * 0.12; // +/- 0.12 deg (latitude)
+      // Generate a random diameter between 250 and 450 meters for each incident
+      // This makes the plots smaller and more realistic
+      const diameter = Math.random() * 750 + 100;
+
+      // Generate a random date/time in the 7 days before a fixed date(20/09/2025) (to keep data consistent)
+      const fixedNow = new Date("2025-09-20T23:59:59");
+      const pastWeek = new Date(fixedNow.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const randomTimestamp = pastWeek.getTime() + Math.random() * (fixedNow.getTime() - pastWeek.getTime());
+      const randomDate = new Date(randomTimestamp);
       // Format as "HH:mm DD/MM/YYYY"
       const pad = (n: number) => n.toString().padStart(2, '0');
       const formattedDate = `${pad(randomDate.getHours())}:${pad(randomDate.getMinutes())} ${pad(randomDate.getDate())}/${pad(randomDate.getMonth() + 1)}/${pad(randomDate.getFullYear())}`;
+      
       data.push({
-        id: id++,
+        id: id,
+        incidentID: `INC-${id.toString().padStart(4, "0")}`, // e.g., INC-0001 for better realism
         city: city.name,
         type: t.name,
         position: [randomLon, randomLat],
         color: t.color,
-        size: diameter, // size is now diameter in meters (not area)
+        size: diameter,
         datetime: formattedDate,
+        severity: severities[Math.floor(Math.random() * severities.length)],
+        status: statuses[Math.floor(Math.random() * statuses.length)],
+        source: sources[Math.floor(Math.random() * sources.length)],
+        description: descriptions[Math.floor(Math.random() * descriptions.length)],
       });
+
+      id++;
     }
   }
+
   return data;
 }
