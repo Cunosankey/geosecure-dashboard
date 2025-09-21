@@ -1,9 +1,0 @@
-Tilføj filtre i et FilterPanel-komponent.
-
-Tilføj Storybook-stories for dine UI-komponenter.
-
-Lav Vitest-tests for dine filtre og kortvisualisering.
-
-Opret et Node.js API i pages/api/ for at simulere data fra backend.
-
-Til sidst: pak det som Electron-app, så dashboardet også kører som desktop-app.
