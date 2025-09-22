@@ -1,6 +1,6 @@
 .filterPanel {
   position: absolute;      // float above the map
-  top: 15px;               // inset from top
+  top: 15px;               // insert from top
   left: 13px;              // inset from left
   display: flex;
   gap: 0.5rem;
@@ -9,6 +9,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   z-index: 5;
+  transition: 0.3s ease; // Smooth transition for position changes (e.g., when sidebar opens and closes)
 
   select {
     padding: 0.35rem 0.5rem;
@@ -33,9 +34,12 @@
 }
 
 .pageWrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100vw;
+  flex-direction: column;
 }
 
 .mapContainer {
@@ -61,7 +65,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 22%; // Slightly larger for clarity
+  width: 20%; 
   height: 100%;
   background: #fafafa;
   border-right: 1px solid #ddd;
@@ -104,4 +108,16 @@
   &:hover {
     color: #000;
   }
+}
+
+.filterPanelShifted {
+  left: 22.5%; // Shift right when sidebar is open (same as sidebar width)
+  transition: left 0.3s ease; // Smooth transition when shifting
+  position: absolute;
+}
+
+// .mapShifted is used to visually shift the map left when the sidebar is open, keeping the map fully visible and not overlapped by the sidebar.
+.mapShifted {
+  margin-right: 22%;
+  transition: margin-right 0.3s ease; // Smooth transition when shifting
 }

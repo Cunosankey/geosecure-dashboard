@@ -13,7 +13,7 @@ import { useFilters } from "../../context/FilterContext";
 import type { Incident } from "../../types/incident";
 import styles from "../../styles/Home.module.scss";
 import { http } from "../../api/http";
-
+import { useSidebar } from "../../context/SidebarContext";
 
 // Initial view state for the map
 const INITIAL_VIEW_STATE = {
@@ -25,9 +25,14 @@ const INITIAL_VIEW_STATE = {
 };
 
 
+
+
 // Main MapView component. Here we integrate the map with filtering functionality.
 export default function MapView() {
-  const { filters } = useFilters();
+
+  const { sidebarOpen, setSidebarOpen } = useSidebar(); // Get sidebar state to to shift the filter panel to the right when opening the sidebar
+
+  const { filters } = useFilters(); // Get current filters from context
 
 // Declaration of the useState hook to render information about the plot(incidents) when hovered over with the mouse
 const [hoverInfo, setHoverInfo] = React.useState<{ 
@@ -77,6 +82,7 @@ const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
       onClick: (info) => {
         if (info.object) {
           setSelectedIncident(info.object); // Open Sidebar with incident details
+          setSidebarOpen(true); // Open the sidebar when an incident is clicked
         }
       }
     }),
@@ -85,9 +91,11 @@ const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   // The getCursor prop changes the cursor to a pointer when hovering over an incident, and to a grab hand when panning the map
   return (
   <>
+  <div className={sidebarOpen ? styles.mapShifted : styles.mapView}> {/* We shift the map view when the sidebar is open */}
     <DeckGL initialViewState={INITIAL_VIEW_STATE} controller layers={layers} getCursor={({ isHovering }) => (isHovering ? 'pointer' : 'grab')}>
       <Map mapStyle="https://api.maptiler.com/maps/streets/style.json?key=NOe6RNQlyuLRNVci1Jv1" />
     </DeckGL>
+    </div>
     {hoverInfo && hoverInfo.object && (
       <div className={styles.hoverTooltip} style={{ // This is for displaying a dialogue box when hovering over an incident
         position: 'absolute', // Ensure the tooltip is positioned absolutely
@@ -107,7 +115,10 @@ const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   <div className={styles.sidebar}>
     <button
       className={styles.closeButton}
-      onClick={() => setSelectedIncident(null)}
+      onClick={() => {
+        setSelectedIncident(null);
+        setSidebarOpen(false); // This resets the filter panel position when closing the sidebar
+      }}
     >
       ✕
     </button>

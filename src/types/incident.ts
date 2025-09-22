@@ -12,3 +12,4 @@ export type Incident = {
   source: string;
   description: string;
 };
+

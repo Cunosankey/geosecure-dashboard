@@ -3,14 +3,16 @@
 import React from "react";
 import { useFilters } from "../../context/FilterContext";
 import styles from "../../styles/Home.module.scss";
+import { useSidebar } from "../../context/SidebarContext";
 
 // This function renders the filter panel with dropdowns for our filters
 export default function FilterPanel() {
+  const { sidebarOpen } = useSidebar();
   const { filters, setFilters } = useFilters();
   const [showMore, setShowMore] = React.useState(false); // State to toggle additional filters
 
   return (
-    <div className={styles.filterPanel}>
+    <div className={`${styles.filterPanel} ${sidebarOpen ? styles.filterPanelShifted : ""}`}> {/* We add a class to shift the filter panel when the sidebar is open */}
       <label>
         City:
         <select
