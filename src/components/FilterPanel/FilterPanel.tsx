@@ -74,6 +74,18 @@ export default function FilterPanel() {
             </label>
 
             <label>
+            Source:
+            <select
+              value={filters.source} onChange={(e) => setFilters((prev) => ({ ...prev, source: e.target.value}))}>
+                <option value="">All</option>
+                <option value="Sensor">Sensor</option>
+                <option value="Manual Report">Manual Report</option>
+                <option value="Automated System">Automated System</option>
+                <option value="External Feed">External Feed</option>
+              </select>
+            </label>
+
+            <label>
               From:
               <input type="date" value={filters.dateFrom} onChange={(e) => setFilters((prev) => ({ ...prev, dateFrom: e.target.value}))
             } />
