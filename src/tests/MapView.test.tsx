@@ -28,7 +28,7 @@ describe("MapView Component", () => {
       const { setFilters } = useFilters();
       return (
         <>
-          <button onClick={() => setFilters({ city: "Copenhagen", type: "" })}>
+          <button onClick={() => setFilters({ city: "Copenhagen", type: "", severity: "", status: "", source: "", dateFrom: "", dateTo: "" })}>
             Apply Filter
           </button>
           <MapView />

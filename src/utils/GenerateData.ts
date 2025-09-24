@@ -28,6 +28,8 @@ const descriptions = [
   "Weather-related warning issued.",
   "Manual report of suspicious activity.",
   "Sensor detected unusual vibration pattern.",
+  "Analysis indicates a potential security threat.",
+  "Potential terrorist attack suspicion reported.",
 ];
 
 export function generateIncidents(): Incident[] {
@@ -35,9 +37,11 @@ export function generateIncidents(): Incident[] {
   // This makes the plots much larger and more visible on the map.
   const data: Incident[] = [];
   let id = 1;
+  const INCIDENTS_PER_TYPE = 6; // Number of incidents to generate per type for a more diverse mock data set
   for (const city of cities) {
     for (const t of types) {
-      // Randomize position within ~0.15 degrees of city center (further spread)
+      for (let i = 0; i < INCIDENTS_PER_TYPE; i++) {
+        // Randomize position within ~0.15 degrees of city center (further spread)
       // This means incidents can appear up to ~15km away from the city center
       const [baseLon, baseLat] = city.coords;
       const randomLon = baseLon + (Math.random() - 0.5) * 0.12; // +/- 0.12 deg (longitude)
@@ -71,6 +75,8 @@ export function generateIncidents(): Incident[] {
       });
 
       id++;
+      }
+      
     }
   }
 
