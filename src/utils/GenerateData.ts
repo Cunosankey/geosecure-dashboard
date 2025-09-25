@@ -41,14 +41,21 @@ export function generateIncidents(): Incident[] {
   const data: Incident[] = [];
   let id = 1;
   const INCIDENTS_PER_TYPE = 5; // Number of incidents to generate per type for a more diverse mock data set
+  const usedPositions = new Set<string>();
   for (const city of cities) {
     for (const t of types) {
       for (let i = 0; i < INCIDENTS_PER_TYPE; i++) {
-      // Randomize position within ~0.12 degrees of city center (further spread)
-      // This means incidents can appear up to ~15km away from the city center
-      const [baseLon, baseLat] = city.coords;
-      const randomLon = baseLon + (Math.random() - 0.5) * 0.12; // +/- 0.12 deg (longitude)
-      const randomLat = baseLat + (Math.random() - 0.5) * 0.12; // +/- 0.12 deg (latitude)
+        let randomLon, randomLat, key; 
+        // Try until we get a unique positions for a plot
+        // This ensures that no two incidents overlap on the map
+        do {
+          const [baseLon, baseLat] = city.coords;
+          randomLon = Number((baseLon + (Math.random() - 0.5) * 0.12).toFixed(5)); // ~11km variation longitude
+          randomLat = Number((baseLat + (Math.random() - 0.5) * 0.12).toFixed(5)); // ~11km variation latitude
+          key = `${randomLon},${randomLat}`; // Unique key for the position
+        } while (usedPositions.has(key)); // Keep trying until we find a unique position
+        usedPositions.add(key); // Mark this position as used
+      
       // Generate a random diameter between 250 and 450 meters for each incident
       // This makes the plots smaller and more realistic
       const diameter = Math.random() * 750 + 100;
@@ -62,7 +69,8 @@ export function generateIncidents(): Incident[] {
       const pad = (n: number) => n.toString().padStart(2, '0');
       const formattedDate = `${pad(randomDate.getHours())}:${pad(randomDate.getMinutes())} ${pad(randomDate.getDate())}/${pad(randomDate.getMonth() + 1)}/${pad(randomDate.getFullYear())}`;
       
-      data.push({
+      // Here we just push the generated incident into our data array
+      data.push({ 
         id: id,
         incidentID: `INC-${id.toString().padStart(4, "0")}`, // e.g., INC-0001 for better realism
         city: city.name,
@@ -83,5 +91,5 @@ export function generateIncidents(): Incident[] {
     }
   }
 
-  return data;
+  return data; // Return the array of generated incidents
 }
