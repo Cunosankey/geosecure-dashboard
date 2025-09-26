@@ -3,8 +3,7 @@
 // DeckGL ScatterplotLayer viser de filtrerede punkter på kortet.
 "use client";
 
-import React, { useMemo, useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
 import Map from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import DeckGL from "@deck.gl/react";
@@ -12,8 +11,9 @@ import { ScatterplotLayer } from "@deck.gl/layers";
 import { useFilters } from "../../context/FilterContext";
 import type { Incident } from "../../types/incident";
 import styles from "../../styles/Home.module.scss";
-import { http } from "../../api/http";
 import { useSidebar } from "../../context/SidebarContext";
+import { useIncidents } from "../../hooks/useIncidents";
+
 
 // Initial view state for the map
 const INITIAL_VIEW_STATE = {
@@ -31,7 +31,6 @@ const INITIAL_VIEW_STATE = {
 export default function MapView() {
 
   const { sidebarOpen, setSidebarOpen } = useSidebar(); // Get sidebar state to to shift the filter panel to the right when opening the sidebar
-
   const { filters } = useFilters(); // Get current filters from context
 
 // Declaration of the useState hook to render information about the plot(incidents) when hovered over with the mouse
@@ -45,39 +44,10 @@ const [hoverInfo, setHoverInfo] = React.useState<{
 const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
 
 
-  // Fetch incidents from the backend API, while keeping them automatically updated when filters change.
-  // We use TanStack Query's `useQuery` hook to handle data fetching, caching, and re-fetching logic.
-  const { data = [] } = useQuery<Incident[]>({
-    // The queryKey uniquely identifies this query in React Query’s cache.
-    // Including `filters` in the key means that whenever filters change, 
-    // React Query will treat it as a new query and automatically re-fetch data.
-    queryKey: ["incidents", filters],
-    // The queryFn defines *how* we fetch the data for this query.
-    queryFn: async () => {
-      // Create a query string for our API request.
-      // URLSearchParams is a built-in browser API for working with query parameters (?key=value).
-      const params = new URLSearchParams();
-      // Loop through all key-value pairs in the filters object (city, type, severity, etc.)
-      // Only include filters where the value is not empty.
-      // This makes the request dynamic: only active filters are sent to the backend.
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
-          params.set(key, value);
-        }
-      });
-      // Convert our params into a proper query string (e.g., "city=Aarhus&type=Warning").
-      const qs = params.toString();
-      // Build the final API endpoint path.
-      // If we have filters, append them as query parameters; otherwise, just call `/api/incidents`.
-      const path = `/api/incidents${qs ? `?${qs}` : ""}`; // Not the path to my incidents.ts in API folder, but to the route for the Express backend
-      // Perform the GET request with our helper `http` client.
-      // This will return an array of incidents from the Express backend.
-      return await http.get<Incident[]>(path);
-    },
-    // Provide placeholder data (an empty array) until the real data is fetched.
-    // This avoids rendering issues with `undefined` or `null` before the fetch completes.
-    placeholderData: [],
-  });
+// Fetch incidents from the backend API, while keeping them automatically updated when filters change.
+// We use TanStack Query's `useQuery` hook to handle data fetching, caching, and re-fetching logic.
+// This is from the custom hook useIncidents in src/hooks/useIncidents.ts
+  const { data = [] } = useIncidents(filters);
 
   // Define layers for DeckGL, because layers depend on filteredData, they will update when filters change
   const layers = [
